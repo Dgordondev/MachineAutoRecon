@@ -75,6 +75,8 @@ menu (){
 headerMenu (){
 	clear
 	header
+	connectionChecker
+	ttlChecker
 	menu
 }
 
@@ -89,11 +91,10 @@ portScan (){
 	echo
         echo "[+] Los puertos se te guardado en la clipboard"
 	echo
-	read -p "Desea guardarlo en el archivo portScan? s(si)/cualquier otra tecla(no)" -n 1 SAVEPORTSCAN
+	read -p "Desea guardarlo en el archivo portScan? s(si)/cualquier otra tecla(no): " -n 1 SAVEPORTSCAN
 	if [ "$SAVEPORTSCAN" == "s" || "$SAVEPORTSCAN" == "S" ]; then
 		$PORTS > portScan
 	fi
-	headerMenu
 }
 
 serviceScan (){
@@ -102,13 +103,16 @@ serviceScan (){
 	echo "Escaneo de servicios"
 	echo "==============================================="
 	echo
-	if [[ -z "$PORTS" ]]; then
+	if [[ ! -z "$PORTS" ]]; then
 		sudo nmap -p"$PORTS" -sCV "$IP" -vvv
 	else
 		sudo nmap -p- -sCV "$IP" -vvv
 	fi
 	echo
-	read -p "Pulse cualquier tecla para continuar" -n 1
+        read -p "Desea guardarlo en el archivo serviceScan? s(si)/cualquier otra tecla(no): " -n 1 SAVESERVICESCAN
+        if [ "$SAVESERVICESCAN" == "s" || "$SAVESERVICESCAN" == "S" ]; then
+                $PORTS > serviceScan
+        fi
 }
 
 completeScan (){
@@ -124,7 +128,10 @@ completeScan (){
 	echo "-------Escaneando servicios-------"
 	echo
 	sudo nmap -p"$PORTS" -sCV "$IP" -vvv
-	headerMenu
+        read -p "Desea guardarlo en el archivo serviceScan? s(si)/cualquier otra tecla(no): " -n 1 SAVESERVICESCAN
+	if [ "$SAVESERVICESCAN" == "s" || "$SAVESERVICESCAN" == "S" ]; then
+                $PORTS > serviceScan
+        fi
 }
 
 whatWeb (){
@@ -136,7 +143,6 @@ whatWeb (){
 	fi
 	echo
   	read -p "Pulse cualquier tecla para continuar" -n 1
-	headerMenu
 }
 
 close (){
@@ -148,6 +154,7 @@ pingResul=$(ping -c 1 "$1")
 header
 connectionChecker
 ttlChecker
+
 while true; do
 	headerMenu
 done
